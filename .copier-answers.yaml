@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier
+_commit: 973c39c
+_src_path: https://github.com/python-project-templates/base.git
+add_docs: false
+add_extension: python
+add_wiki: true
+email: t.paine154@gmail.com
+github: csp-benchmarks
+project_description: Benchmarks for csp
+project_name: csp benchmarks
+python_version_primary: '3.11'
+team: the csp-benchmarks authors
