@@ -27,21 +27,29 @@ export HCLOUD_TOKEN="your-api-token-here"
 
 For GitHub Actions, add it as a repository secret.
 
-### 3. (Optional) SSH Key Setup
+### 3. SSH Key Setup (Required)
 
-For passwordless access:
+SSH keys must be pre-registered in Hetzner Cloud:
 
-1. Add your SSH public key to Hetzner Cloud
-1. Set the key name in the CLI: `--ssh-key-name my-key`
-1. Provide the private key path: `--ssh-key ~/.ssh/id_rsa`
+1. Generate an SSH key pair:
+   ```bash
+   ssh-keygen -t ed25519 -f ~/.ssh/hetzner_key -N ""
+   ```
+1. Add the **public key** to Hetzner Cloud Console with name `benchmarks`
+1. Use the CLI with both paths:
+   ```bash
+   --ssh-key ~/.ssh/hetzner_key --ssh-key-name benchmarks
+   ```
+
+For GitHub Actions, add the private key content as secret `HETZNER_SSH_PRIVATE_KEY`.
 
 ## CLI Usage
 
 ### Run Benchmarks
 
 ```bash
-# Basic run
-python -m csp_benchmarks.hetzner.cli run
+# Basic run (requires SSH key already in Hetzner)
+python -m csp_benchmarks.hetzner.cli run --ssh-key-name benchmarks
 
 # With options
 python -m csp_benchmarks.hetzner.cli run \
