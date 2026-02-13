@@ -216,7 +216,20 @@ class HetznerBenchmarkRunner:
         cmd = f"cd /root/csp-benchmarks && .venv/bin/python -m asv run --config {asv_config} {machine_arg} --verbose {commit_spec}"
         result = self._run_ssh_command(cmd, check=False)
 
-        return result.stdout + result.stderr
+        asv_output = result.stdout + result.stderr
+
+        # Log ASV output for debugging
+        if result.returncode != 0:
+            logger.warning(f"ASV exited with code {result.returncode}")
+        logger.info(f"ASV output (last 2000 chars):\n{asv_output[-2000:]}")
+
+        # List files created in the machine results directory
+        if hasattr(self, "_machine_name"):
+            machine_results_path = f"/root/csp-benchmarks/csp_benchmarks/results/{self._machine_name}/"
+            list_result = self._run_ssh_command(f"ls -la {machine_results_path} || echo 'No results directory'", check=False)
+            logger.info(f"Machine results directory contents:\n{list_result.stdout}")
+
+        return asv_output
 
     def _collect_results(self, asv_output: str) -> dict:
         """Collect benchmark results from the remote server."""
@@ -282,10 +295,32 @@ class HetznerBenchmarkRunner:
         """
         logger.info("Pushing results to repository...")
 
+        # List files in results directory before committing (for debugging)
+        list_result = self._run_ssh_command(
+            "find /root/csp-benchmarks/csp_benchmarks/results -name '*.json' | head -50",
+            check=False,
+        )
+        logger.debug(f"Result files on server:\n{list_result.stdout}")
+
+        # Transform results so csp versions appear on x-axis in ASV charts
+        logger.info("Transforming results for version-based visualization...")
+        transform_result = self._run_ssh_command(
+            "cd /root/csp-benchmarks && .venv/bin/python -m csp_benchmarks.visualization transform-inplace csp_benchmarks/results",
+            check=False,
+        )
+        if transform_result.returncode != 0:
+            logger.warning(f"Transform failed: {transform_result.stderr}")
+        else:
+            logger.info("Results transformed successfully")
+
         commands = [
             "cd /root/csp-benchmarks && git config user.email 'benchmark-bot@example.com'",
             "cd /root/csp-benchmarks && git config user.name 'Benchmark Bot'",
-            "cd /root/csp-benchmarks && git add csp_benchmarks/results/",
+            # Remove backup directory if exists
+            "cd /root/csp-benchmarks && rm -rf csp_benchmarks/results_backup",
+            # Use -A to ensure all new/modified files are staged
+            "cd /root/csp-benchmarks && git add -A csp_benchmarks/results/",
+            "cd /root/csp-benchmarks && git status --short csp_benchmarks/results/",
             "cd /root/csp-benchmarks && git commit -m 'Add benchmark results' || true",
         ]
 
@@ -297,6 +332,9 @@ class HetznerBenchmarkRunner:
             commands.append("cd /root/csp-benchmarks && git push origin main")
 
         for cmd in commands:
-            self._run_ssh_command(cmd, check=False)
+            result = self._run_ssh_command(cmd, check=False)
+            # Log git status output
+            if "git status" in cmd:
+                logger.info(f"Git status:\n{result.stdout}")
 
         logger.info("Results pushed successfully")

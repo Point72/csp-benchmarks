@@ -180,6 +180,8 @@ jobs:
           ls -la csp_benchmarks/asv.conf.json || echo "Config not found"
           echo "Looking for results (relative to config file):"
           ls -la csp_benchmarks/results/ || echo "No results directory"
+          echo "Sample result files:"
+          ls csp_benchmarks/results/*/*.json 2>/dev/null | head -5 || echo "No result files found"
 
       - name: Generate HTML report
         run: |
