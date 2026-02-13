@@ -172,8 +172,22 @@ jobs:
         run: |
           git pull origin main || true
 
+      - name: Check for results
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Looking for asv.conf.json:"
+          ls -la csp_benchmarks/asv.conf.json || echo "Config not found"
+          echo "Looking for results (relative to config file):"
+          ls -la csp_benchmarks/results/ || echo "No results directory"
+
       - name: Generate HTML report
-        run: python -m asv publish --config csp_benchmarks/asv.conf.json
+        run: |
+          if [ -f "csp_benchmarks/asv.conf.json" ] && [ -d "csp_benchmarks/results" ]; then
+            python -m asv publish --config ${{ github.workspace }}/csp_benchmarks/asv.conf.json
+          else
+            echo "Skipping publish - no config or results found"
+          fi
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
