@@ -220,12 +220,29 @@ class HetznerBenchmarkRunner:
         """Collect benchmark results from the remote server."""
         logger.info("Collecting benchmark results...")
 
+        # Check if results directory exists
+        check_result = self._run_ssh_command("ls -la /root/csp-benchmarks/results/ 2>&1 || echo 'NO_RESULTS'", check=False)
+        if "NO_RESULTS" in check_result.stdout or "No such file" in check_result.stdout:
+            logger.warning("No results directory found - ASV may have failed to run")
+            logger.warning(f"ASV output: {asv_output}")
+            return {
+                "server": {
+                    "name": self.server.name,
+                    "id": self.server.id,
+                    "type": self.server.server_type.name,
+                    "ip": self.server_ip,
+                },
+                "asv_output": asv_output,
+                "results_files": [],
+                "error": "No results directory found",
+            }
+
         # Create a temporary directory to store results
         with tempfile.TemporaryDirectory() as tmpdir:
             local_results = Path(tmpdir) / "results"
             local_results.mkdir()
 
-            # Copy results from server
+            # Copy results from server (ASV results_dir is relative to repo root)
             self._scp_from_server("/root/csp-benchmarks/results/", str(local_results))
 
             # Read and parse results

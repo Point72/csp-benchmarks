@@ -125,7 +125,9 @@ For consistent benchmark results, this repository supports running benchmarks on
 
 1. Create a Hetzner Cloud API token at <https://console.hetzner.cloud/>
 1. Set the token as a repository secret: `HCLOUD_TOKEN`
-1. (Optional) Add an SSH key to Hetzner and set `HETZNER_SSH_PRIVATE_KEY` secret
+1. Generate an SSH key pair: `ssh-keygen -t ed25519 -f hetzner_key -N ""`
+1. Add the **public key** to Hetzner Cloud Console with name `benchmarks`
+1. Add the **private key** content as repository secret: `HETZNER_SSH_PRIVATE_KEY`
 
 ### Running on Hetzner
 
@@ -133,8 +135,8 @@ For consistent benchmark results, this repository supports running benchmarks on
 # Set your Hetzner token
 export HCLOUD_TOKEN="your-token-here"
 
-# Run benchmarks on Hetzner
-python -m csp_benchmarks.hetzner.cli run --push
+# Run benchmarks on Hetzner (SSH key must already exist in Hetzner as 'benchmarks')
+python -m csp_benchmarks.hetzner.cli run --ssh-key ~/.ssh/hetzner_key --ssh-key-name benchmarks --push
 
 # Clean up any leftover servers
 python -m csp_benchmarks.hetzner.cli cleanup
