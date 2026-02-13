@@ -186,7 +186,8 @@ jobs:
       - name: Generate HTML report
         run: |
           if [ -f "csp_benchmarks/asv.conf.json" ] && [ -d "csp_benchmarks/results" ]; then
-            python -m asv publish --config ${{ github.workspace }}/csp_benchmarks/asv.conf.json
+            # Use publish config which points to CSP repo for commit validation
+            python -m asv publish --config ${{ github.workspace }}/csp_benchmarks/asv.publish.conf.json
           else
             echo "Skipping publish - no config or results found"
           fi
