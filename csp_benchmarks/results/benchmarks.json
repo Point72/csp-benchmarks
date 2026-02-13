@@ -161,7 +161,7 @@
         "warmup_time": -1
     },
     "bench_core.GraphExecutionSuite.time_fan_in_graph": {
-        "code": "class GraphExecutionSuite:\n    def time_fan_in_graph(self, num_nodes, num_ticks):\n        \"\"\"Time a graph with many sources merging into one.\"\"\"\n    \n        @csp.node\n        def summer(xs: [csp.ts[float]]) -> csp.ts[float]:\n            return sum(x for x in xs if csp.ticked(x))\n    \n        @csp.graph\n        def fan_in_graph():\n            sources = [csp.timer(timedelta(seconds=1), float(i)) for i in range(num_nodes)]\n            result = csp.merge(*sources)\n            csp.add_graph_output(\"output\", result)\n    \n        csp.run(fan_in_graph, starttime=self.start_time, endtime=self.end_time, realtime=False)\n\n    def setup(self, num_nodes, num_ticks):\n        self.start_time = datetime(2020, 1, 1)\n        self.end_time = self.start_time + timedelta(seconds=num_ticks)",
+        "code": "class GraphExecutionSuite:\n    def time_fan_in_graph(self, num_nodes, num_ticks):\n        \"\"\"Time a graph with many sources merging into one.\"\"\"\n    \n        @csp.graph\n        def fan_in_graph():\n            sources = [csp.timer(timedelta(seconds=1), float(i)) for i in range(num_nodes)]\n            result = csp.merge(*sources)\n            csp.add_graph_output(\"output\", result)\n    \n        csp.run(fan_in_graph, starttime=self.start_time, endtime=self.end_time, realtime=False)\n\n    def setup(self, num_nodes, num_ticks):\n        self.start_time = datetime(2020, 1, 1)\n        self.end_time = self.start_time + timedelta(seconds=num_ticks)",
         "min_run_count": 2,
         "name": "bench_core.GraphExecutionSuite.time_fan_in_graph",
         "number": 0,
@@ -186,7 +186,7 @@
         "sample_time": 0.01,
         "type": "time",
         "unit": "seconds",
-        "version": "f20ad5171a51ecb7f63676aed81eca99e2fba21ae4111c7bc1a0a5522eccb7ec",
+        "version": "8f5fb611ff1cfbba723cdc47aaf24a2ad5982f68d85a48f70bdb437a82908f98",
         "warmup_time": -1
     },
     "bench_core.GraphExecutionSuite.time_fan_out_graph": {
