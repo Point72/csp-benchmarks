@@ -8,6 +8,7 @@
 
     "environment_type": "virtualenv",
     "install_timeout": 600,
+    "install_command": ["in-dir={env_dir} python -m pip install {build_dir}"],
 
     "pythons": ["3.11", "3.12", "3.13"],
 

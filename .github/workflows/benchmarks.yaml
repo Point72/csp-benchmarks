@@ -149,7 +149,7 @@ jobs:
 
   # Publish results to GitHub Pages
   publish-results:
-    needs: [benchmark-hetzner]
+    needs: [benchmark-hetzner, benchmark-local]
     if: always() && (needs.benchmark-hetzner.result == 'success' || needs.benchmark-local.result == 'success')
     runs-on: ubuntu-latest
 
