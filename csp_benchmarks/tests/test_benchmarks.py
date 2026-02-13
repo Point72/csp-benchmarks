@@ -141,8 +141,8 @@ class TestASVConfig:
         with open(asv_config_path) as f:
             config = json.load(f)
 
-        # Project is "csp" because we benchmark the CSP repo, not csp-benchmarks
-        assert config["project"] == "csp"
-        assert config["repo"] == "https://github.com/Point72/csp.git"
+        # Project is csp-benchmarks (repo we build), CSP installed via matrix
+        assert config["project"] == "csp-benchmarks"
+        assert config["repo"] == "https://github.com/csp-community/csp-benchmarks.git"
         assert config["benchmark_dir"] == "benchmarks"
         assert config["results_dir"] == "results"
