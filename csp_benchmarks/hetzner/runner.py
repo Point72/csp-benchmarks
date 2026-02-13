@@ -302,22 +302,11 @@ class HetznerBenchmarkRunner:
         )
         logger.debug(f"Result files on server:\n{list_result.stdout}")
 
-        # Transform results so csp versions appear on x-axis in ASV charts
-        logger.info("Transforming results for version-based visualization...")
-        transform_result = self._run_ssh_command(
-            "cd /root/csp-benchmarks && .venv/bin/python -m csp_benchmarks.visualization transform-inplace csp_benchmarks/results",
-            check=False,
-        )
-        if transform_result.returncode != 0:
-            logger.warning(f"Transform failed: {transform_result.stderr}")
-        else:
-            logger.info("Results transformed successfully")
-
         commands = [
             "cd /root/csp-benchmarks && git config user.email 'benchmark-bot@example.com'",
             "cd /root/csp-benchmarks && git config user.name 'Benchmark Bot'",
-            # Remove backup directory if exists
-            "cd /root/csp-benchmarks && rm -rf csp_benchmarks/results_backup",
+            # Transform results to use real CSP tag commit hashes (for proper x-axis display)
+            "cd /root/csp-benchmarks && .venv/bin/python csp_benchmarks/transform_results.py",
             # Use -A to ensure all new/modified files are staged
             "cd /root/csp-benchmarks && git add -A csp_benchmarks/results/",
             "cd /root/csp-benchmarks && git status --short csp_benchmarks/results/",
