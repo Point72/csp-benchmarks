@@ -150,26 +150,11 @@ Benchmarks run automatically:
 - **On push to main**: Benchmarks for the new commit
 - **Manual trigger**: Via workflow_dispatch with custom options
 
-## Configuration
-
-The ASV configuration is in `asv.conf.json`. Key settings:
-
-```json
-{
-    "project": "csp",
-    "repo": "https://github.com/Point72/csp.git",
-    "branches": ["main"],
-    "pythons": ["3.11"],
-    "benchmark_dir": "benchmarks",
-    "results_dir": "results"
-}
-```
-
 ## Results
 
 Benchmark results are stored in the `results/` directory and published to GitHub Pages.
 
-View the latest results at: <https://csp-community.github.io/csp-benchmarks/benchmarks/>
+View the latest results at: <https://csp-community.github.io/csp-benchmarks/>
 
 ## Contributing
 
