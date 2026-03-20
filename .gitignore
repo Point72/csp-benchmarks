@@ -146,8 +146,15 @@ target
 outputs/
 multirun/
 
+<<<<<<< before updating
 # ASV (airspeed velocity) benchmarks
 .asv/
 csp_benchmarks/csp-benchmarks
 csp_benchmarks/csp
 results_backup
+=======
+# AI
+ROADMAP.md
+AGENTS.md
+.github/hooks/sdlc.json
+>>>>>>> after updating
